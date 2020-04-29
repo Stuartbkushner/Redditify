@@ -3,13 +3,15 @@ import RedditAPI from '../models/RedditAPI'
 import RedditPost from './RedditPost'
 import Filters from './Filters'
 import Header from './Header'
+import SpotifyAPI from '../models/SpotifyAPI';
 
 class PlaylistView extends Component {
-  state = { posts: null, section: 'top', time: 'day' }
+  state = { posts: null, spotifyInfo: null,  section: 'top', time: 'day' }
 
   constructor(props) {
     super(props)
     this.redditAPI = new RedditAPI()
+    this.spotifyAPI = new SpotifyAPI()
   }
 
   componentDidMount() {
@@ -30,11 +32,17 @@ class PlaylistView extends Component {
       section, time
     })
     this.setState(prevState => ({ posts }))
+
+    const spotifyInfo = await this.getSpotifyInfo()
+    this.setState(prevState => ({ spotifyInfo }))
   }
 
-  getSpotifyIDs() {
+  async getSpotifyInfo() {
     const { posts } = this.state;
     const result = {}
+    const trackIDs = []
+    const albumIDs = []
+    const playlistIDs = []
 
     for (const post of posts) {
       const url = post.url.toLowerCase()
@@ -42,23 +50,38 @@ class PlaylistView extends Component {
       if (url.indexOf('/playlist') > -1) {
         const parts = url.split('/playlist');
         const head = parts[0].spit('/user/')
-        result[url] = {
-          type: 'playlist',
-          id: parts[parts.length - 1].split('?')[0],
-          user: head[head.length - 1]
-        }
+        const id = parts[parts.length - 1].split('?')[0]
+        const user = head[head.length - 1]
+        playlistIDs.push({ user, id })
+        result[url] = { type: 'playlist', id, user}
       } else if (url.indexOf('/track/') > -1) {
         const parts = url.split('/track/')
-        result[url] = {
-          type: 'track',
-          id: parts[parts.length - 1].split('?')[0]
-        }
+        const id = parts[parts.length - 1].split('?')[0]
+        trackIDs.push(id)
+        result[url] = { type: 'track', id}
       } else if (url.indexOf('/album/') > -1) {
         const parts = url.split('/album/')
-        result[url] = {
-          type: 'album',
-          id: parts[parts.length - 1].split('?')[0]
-      }
+        const id = parts[parts.length - 1].split('?')[0]
+        albumIDs.push(id)
+        result[url] = { type: 'album', id}
+    }
+  }
+
+  if (trackIDs.length > 0) {
+    const tracks = await this.spotifyAPI.tracks(trackIDs)
+    console.log('tracks', tracks)
+  }
+
+  if (albumIDs.length > 0) {
+    const albums = await this.spotifyAPI.albums(albumIDs)
+    console.log('albums', albums)
+  }
+
+  if (playlistIDs.length > 0) {
+    for (const playlistID of playlistIDs) {
+      this.spotifyAPI.playlist(playlistID.user, playlistID.id).then(playlist => {
+        console.log('playlist', playlist)
+      })
     }
   }
 
@@ -67,7 +90,6 @@ class PlaylistView extends Component {
 
   render() {
     const { posts, section, time } = this.state
-    const spotifyIDs = posts ? this.getSpotifyIDs() : {}
 
     return (
       <div>
