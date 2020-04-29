@@ -43,7 +43,7 @@ class PlaylistView extends Component {
         </section>
         <section className="section">
           <div className="container">
-            {posts ? (
+          {posts ? posts.length > 0 ? (
               <div>
               <Filters
                 activeSection={section}
@@ -59,6 +59,8 @@ class PlaylistView extends Component {
                 })}
               </ul>
             </div>
+            ) : (
+              <p>No {section} Spotify posts on Reddit.</p>
             ) : (
               <p>Loading...</p>
             )}
