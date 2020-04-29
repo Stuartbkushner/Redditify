@@ -1,21 +1,36 @@
 import React, { Component } from 'react'
 import RedditAPI from '../models/RedditAPI'
+import RedditPost from './RedditPost'
+import Filters from './Filters'
+
 
 class PlaylistView extends Component {
-  state = { posts: null }
+  state = { posts: null, section: 'top' }
 
   constructor(props) {
     super(props)
     this.redditAPI = new RedditAPI()
   }
 
-  async componentDidMount() {
-    const posts = await this.redditAPI.spotifyPosts()
+  componentDidMount() {
+    this.fetchPosts()
+  }
+
+  chooseSection(section) {
+    this.setState(prevState => ({ section }), () => {
+      this.fetchPosts()
+    })
+  }
+
+  async fetchPosts() {
+    const posts = await this.redditAPI.spotifyPosts({
+      section: this.state.section
+    })
     this.setState(prevState => ({ posts }))
   }
 
   render() {
-    const { posts } = this.state
+    const { posts, section } = this.state
 
     return (
       <div>
@@ -29,15 +44,21 @@ class PlaylistView extends Component {
         <section className="section">
           <div className="container">
             {posts ? (
+              <div>
+              <Filters
+                activeSection={section}
+                chooseSection={s => this.chooseSection(s)}
+              />
               <ul>
                 {posts.map(post => {
                   return (
                     <li key={post.id}>
-                      {post.title}
+                      <RedditPost {...post} />
                     </li>
                   )
                 })}
               </ul>
+            </div>
             ) : (
               <p>Loading...</p>
             )}
