@@ -43,12 +43,13 @@ class PlaylistView extends Component {
         </section>
         <section className="section">
           <div className="container">
-          {posts ? posts.length > 0 ? (
+          {posts ? (
               <div>
               <Filters
                 activeSection={section}
                 chooseSection={s => this.chooseSection(s)}
               />
+              {posts.length > 0 ? (
               <ul>
                 {posts.map(post => {
                   return (
@@ -58,9 +59,10 @@ class PlaylistView extends Component {
                   )
                 })}
               </ul>
+              ) : (
+                <p>No {section} Spotify posts on Reddit.</p>
+              )}
             </div>
-            ) : (
-              <p>No {section} Spotify posts on Reddit.</p>
             ) : (
               <p>Loading...</p>
             )}
