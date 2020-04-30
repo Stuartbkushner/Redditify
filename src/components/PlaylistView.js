@@ -7,7 +7,7 @@ import SpotifyAPI from '../models/SpotifyAPI';
 import { withRouter } from 'react-router-dom';
 
 class PlaylistView extends Component {
-  state = { posts: null, spotifyInfo: null,  section: 'top', time: 'day' }
+  state = { posts: null, spotifyInfo: {}, section: 'top', time: 'day' }
 
   constructor(props) {
     super(props)
@@ -58,6 +58,10 @@ class PlaylistView extends Component {
     const trackIDs = []
     const albumIDs = []
     const playlistIDs = []
+    const postUrlsByTrackID = {}
+    const postUrlsByAlbumID = {}
+    const postUrlsByPlaylistID = {}
+
 
     for (const post of posts) {
       const url = post.url
@@ -69,17 +73,17 @@ class PlaylistView extends Component {
         const id = parts[parts.length - 1].split('?')[0]
         const user = head[head.length - 1]
         playlistIDs.push({ user, id })
-        result[url] = { type: 'playlist', id, user}
+        postUrlsByPlaylistID[id] = url
       } else if (lowercaseUrl.indexOf('/track/') > -1) {
         const parts = url.split(/\/track\//i)
         const id = parts[parts.length - 1].split('?')[0]
         trackIDs.push(id)
-        result[url] = { type: 'track', id}
+        postUrlsByTrackID[id] = url
       } else if (lowercaseUrl.indexOf('/album/') > -1) {
         const parts = url.split(/\/album\//i)
         const id = parts[parts.length - 1].split('?')[0]
         albumIDs.push(id)
-        result[url] = { type: 'album', id}
+        postUrlsByAlbumID[id] = url
     }
   }
 
@@ -87,8 +91,11 @@ class PlaylistView extends Component {
     let tracks
     try {
       tracks = await this.spotifyAPI.tracks(trackIDs)
-      console.log('tracks', tracks)
-    } catch (error) {
+      for (const track of tracks) {
+        const url = postUrlsByTrackID[track.id]
+        result[url] = track
+      }
+  } catch (error) {
       console.error('Failed to fetch Spotify tracks', error)
     }
     if (error.response.status === 401) {
@@ -98,23 +105,44 @@ class PlaylistView extends Component {
   }
 
   if (albumIDs.length > 0) {
-    const albums = await this.spotifyAPI.albums(albumIDs)
-    console.log('albums', albums)
-  }
+    let albums
+    try {
+      albums = await this.spotifyAPI.albums(albumIDs)
+      for (const album of albums) {
+        const url = postUrlsByAlbumID[album.id]
+        result[url] = album
+      }
+    } catch (error) {
+      console.error('failed to fetch Spotify albums', error)
+      if (error.response.status === 401) {
+        this.signOut()
+        return
+      }
+    }
+}
 
   if (playlistIDs.length > 0) {
     for (const playlistID of playlistIDs) {
-      this.spotifyAPI.playlist(playlistID.user, playlistID.id).then(playlist => {
-        console.log('playlist', playlist)
-      }).catch(err => console.error('Failed to fetch playlist', err))
-    }
+      let playlist
+      try {
+        playlist = await this.spotifyAPI.playlist(playlistID.user, playlistID.id)
+        const url = postUrlsByPlaylistID[playlist.id]
+        result[url] = playlist
+      } catch (error) {
+        console.error('failed to fetch playlist', error)
+        if (error.response.status === 401) {
+          this.signOut()
+          return
+        }
+      }
+  }
   }
 
   return result
 }
 
   render() {
-    const { posts, section, time } = this.state
+    const { posts, section, time, spotifyInfo } = this.state
 
     return (
       <div>
@@ -134,7 +162,10 @@ class PlaylistView extends Component {
                 {posts.map(post => {
                   return (
                     <li key={post.id}>
-                      <RedditPost {...post} />
+                          <RedditPost
+                            {...post}
+                            spotifyInfo={spotifyInfo[post.url]}
+                          />
                     </li>
                   )
                 })}
