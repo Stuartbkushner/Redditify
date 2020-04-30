@@ -68,7 +68,10 @@ class SpotifyAPI extends Fletcher {
   }
 
   playlist(user, id) {
-    return this.get(`/v1/users/${user}/playlists/${id}`)
+    const headers = {
+      Authorization: `Bearer ${SpotifyAPI.token()}`
+    }
+    return this.get(`/v1/users/${user}/playlists/${id}`, headers)
   }
 }
 
