@@ -78,3 +78,17 @@ svg:not(:root) {
   overflow: hidden;
 }
 
+.track-count {
+  font-size: 0.9rem;
+  margin-left: 1em;
+  color: #666;
+}
+
+.track-count::before {
+  content: "(";
+}
+
+.track-count::after {
+  content: ")";
+}
+

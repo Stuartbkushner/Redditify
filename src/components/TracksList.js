@@ -3,9 +3,10 @@ import SpotifyTrack from './SpotifyTrack'
 
 class TracksList extends Component {
   render() {
-    const { tracks, className } = this.props
+    const { tracks, className, trackCount } = this.props
 
     return (
+      <div>
       <ol className={`tracks-list ${className}`}>
         {tracks.map((track, i) => (
           <li key={`${track.id}-${i}`}>
@@ -13,6 +14,11 @@ class TracksList extends Component {
           </li>
         ))}
       </ol>
+      {trackCount > tracks.length ? (
+        <p>&hellip;And {trackCount - tracks.length} more</p>
+      ) : ''}
+    </div>
+
     )
   }
 }
