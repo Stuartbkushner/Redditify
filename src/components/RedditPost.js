@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import ExternalLink from './ExternalLink'
 import SpotifyPlaylist from './SpotifyPlaylist'
-import SpotifyTrack from './SpotifyTrack';
+import SpotifyTrack from './SpotifyTrack'
+import SpotifyAlbum from './SpotifyAlbum'
 
 
 class RedditPost extends Component {
@@ -51,6 +52,8 @@ class RedditPost extends Component {
                 <SpotifyPlaylist {...spotifyInfo} />
               ) : spotifyInfo.type === 'track' ? (
                 <SpotifyTrack {...spotifyInfo} />
+              ) : spotifyInfo.type === 'album' ? (
+                <SpotifyAlbum {...spotifyInfo} />
               ) : spotifyInfo.type}
             </div>
           ) : (
