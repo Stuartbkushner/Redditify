@@ -14,7 +14,7 @@ class SpotifyAlbum extends Component {
 
     return (
       <div className="spotify-album content">
-        <h3 className="spotify-album-name subtitle mb-0 mt-2">
+        <p className="spotify-album-name mb-0 mt-2">
           <ExternalLink
             url={url}
             className="spotify-link"
@@ -23,7 +23,7 @@ class SpotifyAlbum extends Component {
             {name}
             <TrackCount count={trackCount} />
           </ExternalLink>
-        </h3>
+        </p>
         <TracksList
           tracks={tracks}
           trackCount={trackCount}
