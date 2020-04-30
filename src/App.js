@@ -9,6 +9,9 @@ class App extends Component {
       <Router>
         <div>
           <Route exact path="/" component={PlaylistView} />
+          <PrivateRoute exact path="/playlist/top/:time" component={PlaylistView} />
+          <PrivateRoute exact path="/playlist/:section" component={PlaylistView} />
+          <PrivateRoute exact path="/playlist" component={PlaylistView} />
         </div>
       </Router>
     )

@@ -7,24 +7,39 @@ import SpotifyAPI from '../models/SpotifyAPI';
 import { withRouter } from 'react-router-dom';
 
 class PlaylistView extends Component {
-  state = { posts: null, spotifyInfo: {}, section: 'top', time: 'day' }
 
   constructor(props) {
     super(props)
+    this.state = {
+      posts: null,
+      spotifyInfo: {},
+      time: props.match.params.time || 'day',
+      section: props.match.params.section || 'top'
+    }
     this.redditAPI = new RedditAPI()
     this.spotifyAPI = new SpotifyAPI()
   }
+
+  componentWillReceiveProps(props) {
+    const params = props.match.params
+    const { section, time } = params
+    this.setState(prevState => ({
+      section: section || 'top', time: time || 'day'
+    }), () => this.fetchPosts())
+  }
+
+
 
   componentDidMount() {
     this.fetchPosts()
   }
 
   chooseSection(section) {
-    this.setState(prevState => ({ section }), () => this.fetchPosts())
+    this.props.history.push(`/playlist/${section}`)
   }
 
   chooseTime(time) {
-    this.setState(prevState => ({ time }), () => this.fetchPosts())
+    this.props.history.push(`/playlist/top/${time}`)
   }
 
   signOut() {
