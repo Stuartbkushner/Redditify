@@ -58,3 +58,9 @@ img {
   max-height: 7.4em;
   overflow-y: auto;
 }
+
+.reddit-logo {
+  display: inline-block;
+  vertical-align: middle;
+}
+
