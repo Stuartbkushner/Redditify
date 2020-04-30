@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import ExternalLink from './ExternalLink'
 import SpotifyPlaylist from './SpotifyPlaylist'
+import SpotifyTrack from './SpotifyTrack';
+
 
 class RedditPost extends Component {
   getThumbnailUrl() {
@@ -47,6 +49,8 @@ class RedditPost extends Component {
             <div>
               {spotifyInfo.type === 'playlist' ? (
                 <SpotifyPlaylist {...spotifyInfo} />
+              ) : spotifyInfo.type === 'track' ? (
+                <SpotifyTrack {...spotifyInfo} />
               ) : spotifyInfo.type}
             </div>
           ) : (
