@@ -58,3 +58,6 @@ img {
   color: #2ab858;
 }
 
+.tracks-list, .spotify-track, .spotify-icon {
+  display: none;
+}
