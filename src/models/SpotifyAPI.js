@@ -35,6 +35,22 @@ class SpotifyAPI extends Fletcher {
     return profile
   }
 
+  createPlaylist(user, name, description) {
+    const headers = {
+      Authorization: `Bearer ${SpotifyAPI.token()}`,
+      'Content-Type': 'application/json'
+    }
+    const body = {
+      name,
+      public: true,
+      collaborative: false,
+      description
+    }
+    console.log(body, headers)
+    const path = `/v1/users/${user}/playlists`
+    return this.post(path, headers, body)
+  }
+
   async search(query, type, limit, offset) {
     let path = `/v1/search?q=${encodeURIComponent(query)}` +
       `&type=${type}`
