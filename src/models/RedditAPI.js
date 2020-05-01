@@ -18,8 +18,15 @@ class RedditAPI extends Fetcher {
       section = `/${opts.section}`
     }
     let path = `/domain/${opts.domain}${section}.json`
+    const params = []
     if (opts.time && opts.section === 'top') {
-      path += `?t=${opts.time}`
+      params.push(`t=${opts.time}`)
+    }
+    if (typeof opts.limit === 'number') {
+      params.push(`limit=${opts.limit}`)
+    }
+    if (params.length > 0) {
+      path += `?${params.join('&')}`
     }
     const resp = await this.get(path)
     return resp.data.children.map(child => {
