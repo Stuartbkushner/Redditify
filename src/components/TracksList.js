@@ -37,8 +37,8 @@ class TracksList extends Component {
           })}
       </ol>
       {trackCount > tracks.length ? (
-        <p>&hellip;And {trackCount - tracks.length} more</p>
-      ) : ''}
+          <p>&hellip;and {trackCount - tracks.length} more.</p>
+          ) : ''}
     </div>
 
     )
