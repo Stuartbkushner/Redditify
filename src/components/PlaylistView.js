@@ -65,7 +65,7 @@ class PlaylistView extends Component {
     for (const subreddit of pastDeselectedSubreddits) {
       const isDeselected = activeSubreddits.indexOf(subreddit) < 0
       const isAvailable = allSubreddits.indexOf(subreddit) > -1
-      if (isDeselected && isAvailable) {
+      if (isDeselected && isAvailable || !isAvailable) {
         newDeselectedSubreddits.push(subreddit)
       }
     }
