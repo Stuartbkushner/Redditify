@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import SectionMenu from './SectionMenu'
 import TimeMenu from './TimeMenu'
+import SubredditMenu from './SubredditMenu'
 import NumberHelper from '../models/NumberHelper'
 
 class Filters extends Component {
   render() {
     const { isOpen } = this.state
     const { activeSection, activeTime, chooseSection, chooseTime,
-      trackCount, subreddits } = this.props
+      trackCount, subreddits, activeSubreddits,
+      chooseSubreddits } = this.props
       const trackUnit = trackCount === 1 ? 'track' : 'tracks'
-      const subredditCount = subreddits.length
+      const subredditCount = activeSubreddits.length
       const subredditUnit = subredditCount === 1 ? 'subreddit' : 'subreddits'
 
     return (
@@ -24,6 +26,13 @@ class Filters extends Component {
           </span>
         </h2>
         <div>
+        {subreddits.length > 0 ? (
+            <SubredditMenu
+              subreddits={subreddits}
+              activeSubreddits={activeSubreddits}
+              chooseSubreddits={chooseSubreddits}
+            />
+          ) : ''}
           <SectionMenu
             activeSection={activeSection}
             chooseSection={chooseSection}
